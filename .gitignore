@@ -1,0 +1,25 @@
+# Entornos virtuales
+venv/
+.venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Base de datos generada al iniciar la API
+data/
+
+# Reportes locales de herramientas
+*.log
+reporte-*.json
+
+# Evidencias locales del informe
+capturas/
+
+# IDE / sistema
+.vscode/
+.idea/
+.DS_Store

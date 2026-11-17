@@ -1,0 +1,2 @@
+Bienvenido a la API Notas.
+Este archivo se sirve desde el endpoint /api/files?name=bienvenida.txt
