@@ -113,8 +113,11 @@ parte de la historia *Eliminar credenciales expuestas*.
 
 ## Flujo de trabajo
 
-- Tablero ágil: GitHub Projects del repositorio (columnas *Pendiente*, *En progreso*, *En revisión*,
-  *Finalizado*).
+- Tablero ágil: [GitHub Projects – Mini Sprint DevSecOps](https://github.com/users/JohandryViles/projects/3)
+  con las columnas *Pendiente (Backlog)*, *En progreso*, *En revisión* y *Finalizado*.
+- Historias de seguridad: [#1 Actualizar librerías vulnerables](../../issues/1),
+  [#2 Eliminar credenciales expuestas](../../issues/2) y
+  [#3 Corregir vulnerabilidades detectadas mediante análisis estático](../../issues/3).
 - Cada historia se trabaja en una rama propia (`feature/<historia>`), y se integra a `main` solo mediante
   **Pull Request aprobado por otro integrante**.
 - La Definition of Done está en [`docs/DEFINITION_OF_DONE.md`](docs/DEFINITION_OF_DONE.md).
