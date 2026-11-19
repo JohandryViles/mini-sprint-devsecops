@@ -1,0 +1,66 @@
+name: Security Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  bandit:
+    name: SAST (Bandit)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Obtener el código
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Configurar Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+
+      - name: Instalar Bandit
+        run: python -m pip install bandit==1.9.4
+
+      - name: Bloquear hallazgos de severidad alta
+        run: bandit -r . -x ./.venv,./venv --severity-level high
+
+  pip-audit:
+    name: SCA (pip-audit)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Obtener el código
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Configurar Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+
+      - name: Instalar pip-audit
+        run: |
+          python -m pip install 'pip>=25.3,<27'
+          python -m pip install pip-audit==2.10.1
+
+      - name: Instalar dependencias de la API en un entorno aislado
+        run: |
+          app_env="$RUNNER_TEMP/app-env"
+          python -m venv --without-pip "$app_env"
+          # PyYAML 5.3.1 necesita Cython 0.29 para compilar el paquete original.
+          printf '%s\n' 'Cython==0.29.37' > "$RUNNER_TEMP/build-constraints.txt"
+          python -m pip --python "$app_env/bin/python" install \
+            --build-constraint "$RUNNER_TEMP/build-constraints.txt" -r requirements.txt
+
+      - name: Bloquear vulnerabilidades conocidas en las dependencias instaladas
+        run: |
+          site_packages=$("$RUNNER_TEMP/app-env/bin/python" -c 'import sysconfig; print(sysconfig.get_path("purelib"))')
+          pip-audit --path "$site_packages" --aliases --progress-spinner off
